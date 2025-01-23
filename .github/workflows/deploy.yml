@@ -38,4 +38,4 @@ jobs:
               run: |
                 docker build -t byeongukyun/demo_frontend ./frontend
                 docker push byeongukyun/demo_frontend
-    deploy:
+    #deploy:
