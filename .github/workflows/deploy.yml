@@ -1,0 +1,41 @@
+name: docker, ci/cd, ec2, hub
+
+on:
+    push:
+        branches:
+            - dev
+
+jobs:
+    docker-cicd:
+        runs-on: ubuntu-latest
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+
+            - name: install jdk 17
+              uses: actions/setup-java@v4
+              with:
+                  distribution: "temurin"
+                  java-version: "17"
+
+            - name: check current status
+              run: |
+                pwd
+                ls
+
+            - name: apply action for docker build
+              uses: docker/setup-buildx-action@v3
+
+            - name: sign in docker hub
+              run: echo "${{ secrets.HUB_DOCKER_TOKEN }}" | docker login -u "${{ secrets.HUB_DOCKER_NAME }}" --password-stdin
+
+            - name: create backend image -> push to repo(hub)
+              run: |
+                docker build -t byeongukyun/demo_backend ./backend
+                docker push byeongukyun/demo_backend
+
+            - name: create frontend image -> push to repo(hub)
+              run: |
+                docker build -t byeongukyun/demo_frontend ./frontend
+                docker push byeongukyun/demo_frontend
+    deploy:
