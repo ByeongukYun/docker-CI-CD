@@ -38,4 +38,15 @@ jobs:
               run: |
                 docker build -t byeongukyun/demo_frontend ./frontend
                 docker push byeongukyun/demo_frontend
+
+            - name: upload files on EC2
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                host: ${{ secrets.EC2_HOST }}
+                username: ${{ secrets.EC2_USER }}
+                key: ${{ secrets.EC2_KEY }}
+                source: |
+                  docker-compose.yml,
+                  ./nginx/default.conf
+                target: /home/ubuntu
     #deploy:
